@@ -1,0 +1,92 @@
+from tkinter import *
+from tkinter import messagebox
+import time
+
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+    def is_full(self):
+        return len(self.items) == 5
+
+    def push(self, item):
+        if not self.is_full():
+            self.items.append(item)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.items.pop()
+        else:
+            return "Stack is empty"
+
+    def peek(self):
+        if not self.is_empty():
+            return self.items[-1]
+        else:
+            return "Stack is empty"
+
+class StackVisualizer:
+    def __init__(self, root):
+        self.window = root
+        self.canvas = Canvas(self.window, width=800, height=600, bg="dark green", relief=RAISED, bd=8)
+        self.canvas.pack()
+
+        self.stack = Stack()
+        self.stack_elements = []  # Menyimpan referensi visual elemen stack
+        self.front_index = -1
+        self.rear_index = -1
+        self.rear_label_position = 176
+        self.front_label_position = 176
+        self.index_marker = 85
+
+        # Initialize GUI elements
+        self.setup()
+
+    def setup(self):
+        make_heading = Label(self.canvas, text="Stack Visualizer", bg="chocolate", fg="yellow", font=("Arial", 25, "bold", "italic"))
+        make_heading.place(x=200, y=20)
+
+        self.canvas.create_rectangle(229, 100, 611, 500, width=3, outline="yellow")
+
+        self.make_input_btn()
+
+    def make_input_btn(self):
+        self.make_insert = Button(self.window, text="Insert", font=("Arial", 18, "bold"), fg="red", bg="black", relief=RAISED, bd=8, command=self.store)
+        self.make_insert.place(x=30, y=530)
+
+        self.make_delete = Button(self.window, text="Delete", font=("Arial", 18, "bold"), fg="red", bg="black", relief=RAISED, bd=8, command=self.deletion)
+        self.make_delete.place(x=670, y=530)
+
+    def store(self):
+        value = len(self.stack.items) + 1
+        if not self.stack.is_full():
+            self.stack.push(value)
+            self.box_insert(value)
+
+    def box_insert(self, value):
+        if not self.stack.is_full():
+            x = 250
+            y = 470 - len(self.stack.items) * 50
+            box = self.canvas.create_rectangle(x, y, x + 100, y + 40, width=3, outline="black", fill="white")
+            text = Label(self.window, text=str(value), font=("Arial", 18, "bold"))
+            text.place(x=x + 40, y=y + 10)
+            self.stack_elements.append((box, text))
+
+    def deletion(self):
+        if not self.stack.is_empty():
+            element = self.stack.pop()
+            self.canvas.delete(self.stack_elements[-1][0])
+            self.stack_elements[-1][1].destroy()
+            self.stack_elements.pop()
+
+if __name__ == '__main__':
+    window = Tk()
+    window.title("Stack Visualizer")
+    window.geometry("800x600")
+    window.maxsize(800, 600)
+    window.minsize(800, 600)
+    StackVisualizer(window)
+    window.mainloop()
